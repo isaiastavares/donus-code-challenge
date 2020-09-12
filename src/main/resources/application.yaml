@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: donus-code-challenge
+  profiles:
+    active: local
+  main:
+    banner-mode: off
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    show-sql: true
+    generate-ddl: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/donus-code-challenge
+    username: donus-code-challenge
+    password: donus-code-challenge
+  flyway:
+    enabled: false
+server:
+  port: ${SERVER_PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json, application/xml, text/html, text/xml, text/plain
+  http2:
+    enabled: true
+  error:
+    include-message: always
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: env, health, loggers, metrics, threaddump, prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: TRACE
+      springframework: INFO
+    br:
+      com:
+        soudonus: INFO
+
+withdraw:
+  percentage: 0.01
+deposit:
+  percentage: 0.005
+---
+spring:
+  profiles: docker
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}

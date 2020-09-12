@@ -1,0 +1,104 @@
+package br.com.soudonus.service.impl
+
+import br.com.soudonus.exception.ConflictException
+import br.com.soudonus.exception.EntityNotFoundException
+import br.com.soudonus.exception.InsufficientBalanceException
+import br.com.soudonus.model.domain.Account
+import br.com.soudonus.model.dto.account.AccountCreateDTO
+import br.com.soudonus.repository.AccountRepository
+import br.com.soudonus.resource.AccountResource
+import io.mockk.coEvery
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.data.repository.findByIdOrNull
+import java.math.BigDecimal
+import java.util.UUID
+
+@ExtendWith(MockKExtension::class)
+class AccountServiceImplTest {
+
+    @InjectMockKs
+    private lateinit var accountService: AccountServiceImpl
+
+    @MockK
+    private lateinit var accountRepository: AccountRepository
+
+    @Test
+    fun `should find account by id`() = runBlocking {
+        val account = AccountResource.getAccount(UUID.randomUUID())
+
+        coEvery { accountRepository.findByIdOrNull(any()) } returns account
+
+        val accountDomain = accountService.findById(UUID.randomUUID())
+
+        assertEquals(account.id, accountDomain.id)
+        assertEquals(account.name, accountDomain.name)
+        assertEquals(account.document, accountDomain.document)
+        assertEquals(account.balance, accountDomain.balance)
+        assertEquals(account.createdAt, accountDomain.createdAt)
+        assertEquals(account.updatedAt, accountDomain.updatedAt)
+    }
+
+    @Test
+    fun `should throw exception when find account by id that no exists`() = runBlocking {
+        coEvery { accountRepository.findByIdOrNull(any()) } returns null
+
+        val accountId = UUID.randomUUID()
+        val exception = async { assertThrows<EntityNotFoundException> { runBlocking { accountService.findById(accountId) } } }.await()
+        assertEquals("Account $accountId not found", exception.message)
+    }
+
+    @Test
+    fun `should create account`() = runBlocking {
+        val account = AccountResource.getAccount(UUID.randomUUID())
+
+        coEvery { accountRepository.findByDocument(any()) } returns null
+        coEvery { accountRepository.save(any<Account>()) } returns account
+
+        val accountCreateDTO = AccountCreateDTO(
+                name = account.name,
+                cpf = account.document)
+
+        val accountDTO = accountService.create(accountCreateDTO)
+
+        assertNotNull(accountDTO.id)
+        assertEquals(accountCreateDTO.name, accountDTO.name)
+        assertEquals(accountCreateDTO.cpf, accountDTO.cpf)
+        assertEquals(BigDecimal.ZERO, accountDTO.balance)
+        assertNotNull(accountDTO.createdAt)
+        assertNotNull(accountDTO.updatedAt)
+    }
+
+    @Test
+    fun `should throw exception when create account that already exists`() = runBlocking {
+        val account = AccountResource.getAccount(UUID.randomUUID())
+
+        coEvery { accountRepository.findByDocument(any()) } returns account
+
+        val accountCreateDTO = AccountCreateDTO(
+                name = account.name,
+                cpf = account.document)
+
+        val exception = async { assertThrows<ConflictException> { runBlocking { accountService.create(accountCreateDTO) } } }.await()
+        assertEquals("Account already exists with this CPF", exception.message)
+    }
+
+    @Test
+    fun `should throw exception if the balance is going to be negative`() = runBlocking {
+        val account = AccountResource.getAccount(UUID.randomUUID())
+
+        coEvery { accountRepository.findByIdOrNull(any()) } returns account
+
+        val exception = async { assertThrows<InsufficientBalanceException> { runBlocking { accountService.decreaseBalance(UUID.randomUUID(), BigDecimal.ONE) } } }.await()
+        assertEquals("Insufficient balance", exception.message)
+    }
+
+}
