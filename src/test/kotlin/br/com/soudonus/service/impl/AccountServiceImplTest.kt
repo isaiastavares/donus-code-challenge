@@ -92,6 +92,20 @@ class AccountServiceImplTest {
     }
 
     @Test
+    fun `should decrease the balance`() = runBlocking {
+        val account = AccountResource.getAccount(UUID.randomUUID())
+        account.balance = BigDecimal.ONE
+
+        coEvery { accountRepository.findByIdOrNull(any()) } returns account
+        coEvery { accountRepository.save(any<Account>()) } returns account
+
+        val (balanceFrom, balanceTo) = accountService.decreaseBalance(UUID.randomUUID(), BigDecimal.ONE)
+
+        assertEquals(BigDecimal.ONE, balanceFrom)
+        assertEquals(BigDecimal.ZERO, balanceTo)
+    }
+
+    @Test
     fun `should throw exception if the balance is going to be negative`() = runBlocking {
         val account = AccountResource.getAccount(UUID.randomUUID())
 
@@ -99,6 +113,19 @@ class AccountServiceImplTest {
 
         val exception = async { assertThrows<InsufficientBalanceException> { runBlocking { accountService.decreaseBalance(UUID.randomUUID(), BigDecimal.ONE) } } }.await()
         assertEquals("Insufficient balance", exception.message)
+    }
+
+    @Test
+    fun `should increase the balance`() = runBlocking {
+        val account = AccountResource.getAccount(UUID.randomUUID())
+
+        coEvery { accountRepository.findByIdOrNull(any()) } returns account
+        coEvery { accountRepository.save(any<Account>()) } returns account
+
+        val (balanceFrom, balanceTo) = accountService.increaseBalance(UUID.randomUUID(), BigDecimal.ONE)
+
+        assertEquals(BigDecimal.ZERO, balanceFrom)
+        assertEquals(BigDecimal.ONE, balanceTo)
     }
 
 }
