@@ -17,11 +17,13 @@ import java.util.function.Supplier
 class BaseIntegrationTest {
 
     companion object {
+        private const val DONUS_CODE_CHALLENGE = "donus-code-challenge"
+
         @Container
         val container = PostgreSQLContainer<Nothing>("postgres:12").apply {
-            withDatabaseName("donus-code-challenge")
-            withUsername("donus-code-challenge")
-            withPassword("donus-code-challenge")
+            withDatabaseName(DONUS_CODE_CHALLENGE)
+            withUsername(DONUS_CODE_CHALLENGE)
+            withPassword(DONUS_CODE_CHALLENGE)
             start()
         }
 
