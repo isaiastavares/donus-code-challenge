@@ -39,7 +39,7 @@ class AccountConverterTest {
     fun `converter dto to model create`() {
         val dto = AccountCreateDTO(
                 name = "name",
-                cpf = "043.962.081-38")
+                cpf = "333.437.938-84")
 
         val model = AccountConverter.fromDTOToModelCreate(dto)
 

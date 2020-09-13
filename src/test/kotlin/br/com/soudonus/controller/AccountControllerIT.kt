@@ -5,6 +5,7 @@ import br.com.soudonus.configuration.ResourceDataMapper
 import br.com.soudonus.model.dto.account.AccountCreateDTO
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import java.math.BigDecimal
@@ -17,6 +18,7 @@ class AccountControllerIT : BaseIntegrationTest() {
     companion object {
         private const val API_PATH = "/v1/accounts"
         private const val PATH_MESSAGE = "$.message"
+        private const val PATH_STATUS = "$.status"
         private val VALID_ACCOUNT_CREATE = ResourceDataMapper.getFrom("account/valid.json", AccountCreateDTO::class.java) as AccountCreateDTO
         private val VALID_ACCOUNT_ALREADY_EXISTS = ResourceDataMapper.getFromAsText("account/account-already-exists.json")
         private val INVALID_ACCOUNT_CPF_CREATE = ResourceDataMapper.getFromAsText("account/invalid-cpf.json")
@@ -33,6 +35,7 @@ class AccountControllerIT : BaseIntegrationTest() {
                 .exchange()
                 .expectStatus().isBadRequest
                 .expectBody()
+                .jsonPath(PATH_STATUS).isEqualTo(HttpStatus.BAD_REQUEST.value())
                 .jsonPath(PATH_MESSAGE).isEqualTo("cpf has invalid value '12345678901'")
     }
 
@@ -46,6 +49,7 @@ class AccountControllerIT : BaseIntegrationTest() {
                 .exchange()
                 .expectStatus().isBadRequest
                 .expectBody()
+                .jsonPath(PATH_STATUS).isEqualTo(HttpStatus.BAD_REQUEST.value())
                 .jsonPath(PATH_MESSAGE).isEqualTo("name has invalid value ''")
     }
 
@@ -59,6 +63,7 @@ class AccountControllerIT : BaseIntegrationTest() {
                 .exchange()
                 .expectStatus().is4xxClientError
                 .expectBody()
+                .jsonPath(PATH_STATUS).isEqualTo(HttpStatus.CONFLICT.value())
                 .jsonPath(PATH_MESSAGE).isEqualTo("Account already exists with this CPF")
     }
 
