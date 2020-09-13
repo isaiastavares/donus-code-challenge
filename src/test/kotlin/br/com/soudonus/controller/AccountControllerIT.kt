@@ -20,6 +20,7 @@ class AccountControllerIT : BaseIntegrationTest() {
         private const val PATH_MESSAGE = "$.message"
         private const val PATH_STATUS = "$.status"
         private const val ACCOUNT_ID = "70aa215e-00b7-4125-a4ce-e669977884e3"
+        private const val INVALID_ACCOUNT_ID = "123"
         private val VALID_ACCOUNT_CREATE = ResourceDataMapper.getFrom("account/valid.json", AccountCreateDTO::class.java) as AccountCreateDTO
         private val VALID_ACCOUNT_ALREADY_EXISTS = ResourceDataMapper.getFromAsText("account/account-already-exists.json")
         private val INVALID_ACCOUNT_CPF_CREATE = ResourceDataMapper.getFromAsText("account/invalid-cpf.json")
@@ -40,6 +41,18 @@ class AccountControllerIT : BaseIntegrationTest() {
                 .jsonPath("$.balance").isEqualTo(BigDecimal.ZERO.toDouble())
                 .jsonPath("$.createdAt").isNotEmpty
                 .jsonPath("$.updatedAt").isNotEmpty
+    }
+
+    @Test
+    fun `given an invalid account id should return bad request`() {
+        this.webTestClient.get()
+                .uri(API_PATH.plus("/").plus(INVALID_ACCOUNT_ID))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isBadRequest
+                .expectBody()
+                .jsonPath(PATH_STATUS).isEqualTo(HttpStatus.BAD_REQUEST.value())
+                .jsonPath(PATH_MESSAGE).isEqualTo("Invalid value '$INVALID_ACCOUNT_ID'")
     }
 
     @Test
