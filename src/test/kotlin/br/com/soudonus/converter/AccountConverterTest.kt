@@ -4,6 +4,7 @@ import br.com.soudonus.model.domain.Account
 import br.com.soudonus.model.dto.account.AccountCreateDTO
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -38,16 +39,16 @@ class AccountConverterTest {
     fun `converter dto to model create`() {
         val dto = AccountCreateDTO(
                 name = "name",
-                cpf = "cpf")
+                cpf = "043.962.081-38")
 
         val model = AccountConverter.fromDTOToModelCreate(dto)
 
         assertNull(model.id)
         assertEquals(dto.name, model.name)
-        assertEquals(dto.cpf, model.document)
+        assertEquals(dto.cpf.replace(Regex("[^0-9]"), ""), model.document)
         assertEquals(BigDecimal.ZERO, model.balance)
-        assertNull(model.createdAt)
-        assertNull(model.updatedAt)
+        assertNotNull(model.createdAt)
+        assertNotNull(model.updatedAt)
     }
 
 }
