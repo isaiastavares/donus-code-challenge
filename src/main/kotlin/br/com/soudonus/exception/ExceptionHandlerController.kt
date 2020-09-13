@@ -33,7 +33,7 @@ class ExceptionHandlerController {
     @ExceptionHandler(WebExchangeBindException::class)
     fun handleWebExchangeBindException(e: WebExchangeBindException): HttpStatus {
         throw object : WebExchangeBindException(e.methodParameter!!, e.bindingResult) {
-            override val message = "${fieldError?.field} has invalid value '${fieldError?.rejectedValue}'"
+            override val message = "${fieldError?.field} ${fieldError?.defaultMessage}"
         }
     }
 }
