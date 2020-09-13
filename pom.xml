@@ -18,6 +18,8 @@
     <description>API com algumas funções essenciais relacionadas ao gerenciamento de contas bancárias</description>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <kotlin.version>1.3.72</kotlin.version>
         <springdoc.version>1.4.3</springdoc.version>
