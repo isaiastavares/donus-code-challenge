@@ -24,6 +24,7 @@
         <testcontainers.version>1.14.3</testcontainers.version>
         <mockk.version>1.10.0</mockk.version>
         <jacoco.version>0.8.2</jacoco.version>
+        <maven.plugin.failsafe.version>2.22.2</maven.plugin.failsafe.version>
     </properties>
 
     <dependencies>
@@ -192,10 +193,37 @@
                     </execution>
                     <execution>
                         <id>report</id>
-                        <phase>prepare-package</phase>
+                        <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.plugin.failsafe.version}</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${project.build.directory}/classes
+                                </additionalClasspathElement>
+                            </additionalClasspathElements>
+                            <includes>
+                                <include>**/*IT.kt</include>
+                            </includes>
+                            <forkCount>1</forkCount>
+                            <reuseForks>false</reuseForks>
+                            <useSystemClassLoader>false</useSystemClassLoader>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
