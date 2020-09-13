@@ -10,9 +10,6 @@ create table account
     updated_at timestamp
 );
 
-create unique index account_document_uindex
-    on account (document);
-
 create table transaction
 (
     id            uuid not null
@@ -26,3 +23,6 @@ create table transaction
     created_at    timestamp,
     type          varchar(15)
 );
+
+create unique index account_document_uindex
+    on account (document);

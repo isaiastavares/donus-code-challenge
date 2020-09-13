@@ -37,14 +37,14 @@ class AccountServiceImplTest {
 
         coEvery { accountRepository.findByIdOrNull(any()) } returns account
 
-        val accountDomain = accountService.findById(UUID.randomUUID())
+        val dto = accountService.findById(UUID.randomUUID())
 
-        assertEquals(account.id, accountDomain.id)
-        assertEquals(account.name, accountDomain.name)
-        assertEquals(account.document, accountDomain.document)
-        assertEquals(account.balance, accountDomain.balance)
-        assertEquals(account.createdAt, accountDomain.createdAt)
-        assertEquals(account.updatedAt, accountDomain.updatedAt)
+        assertEquals(account.id, dto.id)
+        assertEquals(account.name, dto.name)
+        assertEquals(account.document, dto.cpf)
+        assertEquals(account.balance, dto.balance)
+        assertEquals(account.createdAt, dto.createdAt)
+        assertEquals(account.updatedAt, dto.updatedAt)
     }
 
     @Test

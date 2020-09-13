@@ -17,8 +17,9 @@ import java.util.UUID
 @Service
 class AccountServiceImpl(private val repository: AccountRepository) : AccountService {
 
-    override suspend fun findById(accountId: UUID): Account {
-        return repository.findByIdOrNull(accountId) ?: throw EntityNotFoundException("Account $accountId not found")
+    override suspend fun findById(accountId: UUID): AccountDTO {
+        val account = findByIdDomain(accountId)
+        return AccountConverter.fromModelToDTO(account)
     }
 
     override suspend fun create(accountDTO: AccountCreateDTO): AccountDTO {
@@ -29,7 +30,7 @@ class AccountServiceImpl(private val repository: AccountRepository) : AccountSer
     }
 
     override suspend fun increaseBalance(accountId: UUID, value: BigDecimal): Pair<BigDecimal, BigDecimal> {
-        val account = findById(accountId)
+        val account = findByIdDomain(accountId)
         val balanceFrom = account.balance
         val balanceTo = account.balance + value
 
@@ -37,7 +38,7 @@ class AccountServiceImpl(private val repository: AccountRepository) : AccountSer
     }
 
     override suspend fun decreaseBalance(accountId: UUID, value: BigDecimal): Pair<BigDecimal, BigDecimal> {
-        val account = findById(accountId)
+        val account = findByIdDomain(accountId)
         val balanceFrom = account.balance
         val balanceTo = account.balance - value
 
@@ -46,6 +47,11 @@ class AccountServiceImpl(private val repository: AccountRepository) : AccountSer
         }
 
         return updateBalance(account, balanceFrom, balanceTo)
+    }
+
+    private suspend fun findByIdDomain(accountId: UUID): Account {
+        return repository.findByIdOrNull(accountId)
+                ?: throw EntityNotFoundException("Account $accountId not found")
     }
 
     private suspend fun updateBalance(account: Account, balanceFrom: BigDecimal, balanceTo: BigDecimal): Pair<BigDecimal, BigDecimal> {
