@@ -41,10 +41,6 @@ management:
       show-details: always
 
 logging:
-  level:
-    com:
-      zaxxer:
-        hikari: DEBUG
     org:
       hibernate:
         SQL: TRACE
