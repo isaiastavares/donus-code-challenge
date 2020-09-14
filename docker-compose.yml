@@ -1,0 +1,30 @@
+version: '3'
+services:
+  donus:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      SERVER_PORT: 8089
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/donus-code-challenge
+      DB_USER: donus-code-challenge
+      DB_PASS: donus-code-challenge
+    ports:
+      - '8089:8089'
+    depends_on:
+      - postgres
+    links:
+      - postgres
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: donus-code-challenge
+      POSTGRES_PASSWORD: donus-code-challenge
+      POSTGRES_DB: donus-code-challenge
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U donus-code-challenge" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5433:5432"
