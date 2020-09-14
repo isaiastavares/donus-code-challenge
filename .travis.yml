@@ -13,7 +13,7 @@ addons:
       secure: "TwMgq5qNwydUYSpC5vFYgTM9MGyj41r9hsjU6jJrV84+M7ktM1b0F3HWpOKqS/silWIrbwggvsuY2JAfQ+cGCjngSBb9/NjlLxDx10uCLcMUvGPW0cTh6P2ioSrpauAbbf5QFligUqczsZw4GrMzgckXha3N/iyCS1of/2gw3J9kopcOZCYs4/Q3m1xOb7Pcb0Fh4Wke5saZZ0dSJUDc6GVcvroEodnBq7zmpjAU+mZImkkJgRhrBOh2cKveaXq2+HqSEmQpR8as5ER1mYtIjVcnHigtZuGl0F5cNkKx/LlTatO86ii7KhvxW1BmIsv1tyw+2LwlpV0y695YrRnLcMwH544V5vYcBNteBbzOuckHVU9R/jL8W/RVOXVz/QPj4vp5U8TFoscF/TZNV4YQPgDvc4kghoglRt+VBwNfs8vmMwMSQLJ/hdtmI4TE69b1EgWPCzIgnDf643ceOvAoMCnyD1paIJtmN7GdgkcYpDSWOkaCCwsZr8wYG8V5ZAsTUsC4WvK7/ItYSzxc5d3uVUNnPgyd19FbZVQfb3quVKMlHv3JuCy06DcQ/VVmRuBq/1lONSpB+64zWSU5Sb0sLvByXqv6ZOZmKsLjGsOlx2OH/48TkHn9dAloHt9te2iwW/hJK5NykRaYDbwfKNGwO9/9UTsDHvX9FaUhtkk9tfU="
 
 script:
-- "./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install verify sonar:sonar -Dsonar.projectKey=isaiastavares-github -Dsonar.coverage.exclusions=**/soudonus/DonusCodeChallengeApplication,**/soudonus/exception/ExceptionHandlerController"
+- "./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install verify sonar:sonar -Dsonar.projectKey=isaiastavares-github -Dsonar.coverage.exclusions=**/soudonus/DonusCodeChallengeApplication.kt,**/soudonus/exception/ExceptionHandlerController.kt"
 
 cache:
   directories:
