@@ -18,6 +18,9 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import java.math.BigDecimal
 import java.util.UUID
@@ -30,6 +33,23 @@ class AccountServiceImplTest {
 
     @MockK
     private lateinit var accountRepository: AccountRepository
+
+    @Test
+    fun `should find all accounts by id paginated`() = runBlocking {
+        val account = AccountResource.getAccount(UUID.randomUUID())
+
+        coEvery { accountRepository.findAll(any<Pageable>()) } returns PageImpl(listOf(account))
+
+        val page = accountService.findAll(PageRequest.of(0, 10))
+        val accountDTO = page.get().findFirst().get()
+
+        assertEquals(account.id, accountDTO.id)
+        assertEquals(account.name, accountDTO.name)
+        assertEquals(account.document, accountDTO.cpf)
+        assertEquals(account.balance, accountDTO.balance)
+        assertEquals(account.createdAt, accountDTO.createdAt)
+        assertEquals(account.updatedAt, accountDTO.updatedAt)
+    }
 
     @Test
     fun `should find account by id`() = runBlocking {

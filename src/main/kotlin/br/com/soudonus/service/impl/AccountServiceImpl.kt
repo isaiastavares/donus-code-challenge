@@ -9,6 +9,8 @@ import br.com.soudonus.model.dto.account.AccountCreateDTO
 import br.com.soudonus.model.dto.account.AccountDTO
 import br.com.soudonus.repository.AccountRepository
 import br.com.soudonus.service.AccountService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -16,6 +18,11 @@ import java.util.UUID
 
 @Service
 class AccountServiceImpl(private val repository: AccountRepository) : AccountService {
+
+    override suspend fun findAll(page: Pageable): Page<AccountDTO> {
+        return repository.findAll(page)
+                .map { AccountConverter.fromModelToDTO(it) }
+    }
 
     override suspend fun findById(accountId: UUID): AccountDTO {
         val account = findByIdDomain(accountId)
