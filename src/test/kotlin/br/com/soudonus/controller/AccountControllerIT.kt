@@ -66,7 +66,7 @@ class AccountControllerIT : BaseIntegrationTest() {
                 .expectStatus().isBadRequest
                 .expectBody()
                 .jsonPath(PATH_STATUS).isEqualTo(HttpStatus.BAD_REQUEST.value())
-                .jsonPath(PATH_MESSAGE).isEqualTo("cpf has invalid value '12345678901'")
+                .jsonPath(PATH_MESSAGE).isEqualTo("cpf invalid Brazilian individual taxpayer registry number (CPF)")
     }
 
     @Test
@@ -80,7 +80,7 @@ class AccountControllerIT : BaseIntegrationTest() {
                 .expectStatus().isBadRequest
                 .expectBody()
                 .jsonPath(PATH_STATUS).isEqualTo(HttpStatus.BAD_REQUEST.value())
-                .jsonPath(PATH_MESSAGE).isEqualTo("name has invalid value ''")
+                .jsonPath(PATH_MESSAGE).isEqualTo("name must not be blank")
     }
 
     @Test
