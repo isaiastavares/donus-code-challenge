@@ -18,11 +18,9 @@ import java.util.UUID
 @Service
 class WithdrawStrategyImpl(
         private val repository: TransactionRepository,
-        private val accountService: AccountService
+        private val accountService: AccountService,
+        @Value("\${withdraw.percentage}") private var withdrawPercentage: String
 ) : TransactionStrategy() {
-
-    @Value("\${withdraw.percentage}")
-    private lateinit var withdrawPercentage: String
 
     override fun getType(): TransactionType {
         return TransactionType.WITHDRAW

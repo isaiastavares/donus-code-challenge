@@ -18,11 +18,9 @@ import java.util.UUID
 @Service
 class DepositStrategyImpl(
         private val repository: TransactionRepository,
-        private val accountService: AccountService
+        private val accountService: AccountService,
+        @Value("\${deposit.percentage}") private val depositPercentage: String
 ) : TransactionStrategy() {
-
-    @Value("\${deposit.percentage}")
-    private lateinit var depositPercentage: String
 
     override fun getType(): TransactionType {
         return TransactionType.DEPOSIT
